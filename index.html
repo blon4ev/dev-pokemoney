@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v69.6 (Final Polishing)</title>
+    <title>Budget Split Ledger (Production)</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -18,7 +18,7 @@
         
         <div id="screen-tama" class="screen active" style="padding-top:0; padding-left:0; padding-right:0;">
             <div class="header-nav" style="padding-top:calc(10px + env(safe-area-inset-top)); margin-bottom:0; background:var(--bg-main); z-index:10;">
-                <h1 class="month-label" style="font-size:18px;">홈</h1>
+                <div style="width: 20px;"></div>
                 <div class="header-actions">
                     <button class="action-btn" onclick="openSettings()">⚙️</button>
                 </div>
@@ -39,7 +39,6 @@
                 </div>
 
                 <div class="tama-character-wrapper" id="pokemon-wrapper">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/underground.png" class="battle-base" alt="">
                     <img src="" id="pokemon-img" class="tama-character" style="display:none;" alt="">
                     <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" id="pokemon-egg" class="tama-character" style="display:none;" alt="">
                 </div>
@@ -191,6 +190,7 @@
         <div id="screen-input" class="screen">
             <div class="input-header-area" style="display:flex; justify-content:space-between; align-items:center;">
                 <button class="action-btn" style="width:auto; padding:0 12px; font-size:14px;" onclick="closeInputScreen()">취소</button>
+                
                 <div style="background:var(--bg-main); display:flex; padding:3px; width:140px; border:none; box-shadow: var(--shadow-3px); margin:3px; flex-shrink:0;">
                     <button id="seg-ex" style="flex:1; border:none; background:var(--text-main); color:white; padding:8px; font-size:14px; font-weight:bold; border-radius:0;" onclick="setInputMode('ex')">지출</button>
                     <button id="seg-in" style="flex:1; border:none; background:transparent; color:var(--text-main); padding:8px; font-size:14px;" onclick="setInputMode('in')">수입</button>
