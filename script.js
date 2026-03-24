@@ -126,7 +126,7 @@ function updateBattleMessage(msg) {
 function checkDailyCandy() {
     const today = getTodayDateStr();
     if (tamaState.lastLoginDate !== today) {
-        // 🌟 수정됨: 일일 접속 보상 15개로 상향
+        // 🌟 수정됨: 일일 접속 보상 15개
         tamaState.candies += 15;
         tamaState.lastLoginDate = today;
         saveTamaState();
