@@ -783,7 +783,6 @@ function changeActivePokemon() {
     updateBattleMessage(`가라! ${tamaState.name}, 널(를) 정했다!`);
 }
 
-// 🌟 수정됨: 도감 그리드 렌더링 로직 (마진 해킹 제거)
 function renderPokedex() {
     const grid = document.getElementById('pokedex-grid');
     grid.innerHTML = '';
