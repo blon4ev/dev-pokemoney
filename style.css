@@ -137,25 +137,24 @@ div { box-sizing: border-box; }
 
 
 /* =========================================
-   4. 도감 화면 (Pokedex Screen - v69.3)
+   4. 도감 화면 (Pokedex Screen - v69.4)
 ========================================= */
 .pokedex-scroll { 
     flex: 1; 
     overflow-y: auto; 
-    overflow-x: hidden; /* 가로 스크롤 완벽 차단 */
-    padding: 0 15px 20px 15px;
+    overflow-x: hidden; 
+    /* 🌟 수정됨: 상단 패딩을 4px 주어 그리드 테두리 위쪽 잘림 방지 */
+    padding: 4px 15px 20px 15px;
     min-height: 0; 
     width: 100%;
     box-sizing: border-box;
 }
-/* 🌟 수정: 3열 배치로 공간 확보 및 가로 폭 안전하게 제한 */
 .pokedex-grid { 
     display: grid; 
     grid-template-columns: repeat(3, 1fr); 
     gap: 12px; 
     width: 100%;
 }
-/* 🌟 수정: 글씨가 카드 밖으로 삐져나가지 않도록 카드 내부에 완벽 수납 */
 .dex-item { 
     background: var(--bg-card); 
     box-shadow: var(--shadow-3px); 
@@ -168,7 +167,6 @@ div { box-sizing: border-box; }
     border: 2px solid var(--border-light); 
     box-sizing: border-box;
 }
-/* 🌟 수정: 텍스트 큼직하게 상향 & 위치 박스 안쪽 고정 */
 .dex-num { 
     position: absolute; 
     top: 4px; 
@@ -183,7 +181,7 @@ div { box-sizing: border-box; }
     object-fit: contain; 
     image-rendering: pixelated; 
     transition: transform 0.2s; 
-    margin-top: 10px; /* 위쪽 글씨 공간 확보 */
+    margin-top: 10px; 
 }
 .dex-item:active .dex-img {
     transform: scale(1.1);
@@ -290,19 +288,6 @@ div { box-sizing: border-box; }
 .switch { width: 50px; height: 28px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-3px); margin: 3px;}
 .switch::after { content: ''; position: absolute; width: 18px; height: 18px; background: var(--text-main); top: 5px; left: 5px; transition: 0s; }
 .switch.on::after { left: 27px; background: var(--accent-green);}
-
-
-/* =========================================
-   8. 팝업 및 오버레이 (Overlays & Toasts)
-========================================= */
-.toast-wrapper { position: absolute; bottom: 100px; left: 0; width: 100%; z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; transform: translateY(15px);}
-.toast-wrapper.show { opacity: 1; transform: translateY(0); }
-.retro-toast-box { background-color: var(--bg-card); border: none; padding: 18px 24px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; justify-content: center; margin: 4px; text-align: center; white-space: nowrap;}
-.retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; margin: 0; }
-
-.stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(20px + env(safe-area-inset-top)) 15px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
-.stats-modal.active { display: flex; }
-.stats-card { margin-bottom: 15px; padding: 16px;}
 
 .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom)) 0; box-sizing: border-box; border: none;}
 .multi-picker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 15px; flex-shrink: 0; }
