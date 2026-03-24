@@ -16,7 +16,6 @@ let multiSelectedDates = [];
 let inputPaymentMethod = 'cash'; 
 let isDutch = false; let dutchPeople = 2;
 
-// 🌟 신규: 이번 주 내역 아코디언 상태
 let isWeeklyExpanded = false; 
 
 const emojiList = ['✨','🍔','☕','🍺','💊','📚','🎮','✈️','🎁','🐶','👶','💻','👗','👠','🏋️','🎬','🚗','📱','🥖','🥩','🍭','🎫','💸','🏦','🎉'];
@@ -134,7 +133,6 @@ function checkDailyCandy() {
     }
 }
 
-// 🌟 신규: 리스트 상태에 따라 포켓몬 이미지(GIF vs 박스아이콘)를 교체하는 함수
 function updatePokemonImage() {
     const imgEl = document.getElementById('pokemon-img');
     const eggEl = document.getElementById('pokemon-egg');
@@ -151,7 +149,6 @@ function updatePokemonImage() {
         if(isLegendary && !isWeeklyExpanded) document.getElementById('pokemon-stage').classList.add('legendary-glow');
         else document.getElementById('pokemon-stage').classList.remove('legendary-glow');
 
-        // 리스트가 펼쳐지면 작은 7세대 아이콘으로 교체
         if (isWeeklyExpanded) {
             imgEl.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/${tamaState.currentPokemonId}.png`;
         } else {
@@ -267,7 +264,6 @@ function changeDutchPeople(delta) {
     document.getElementById('dutch-people-count').innerText = dutchPeople;
 }
 
-// 🌟 신규: 아코디언 접기/펼치기 토글 함수
 function toggleWeeklyList() {
     isWeeklyExpanded = !isWeeklyExpanded;
     const chevron = document.getElementById('weekly-chevron');
@@ -352,9 +348,7 @@ function renderTama() {
     document.getElementById('tamaStreak').innerText = streakMsg;
     document.getElementById('candy-limit-text').innerText = `매일 접속 5개 / 기록 보상`;
 
-    // 🌟 이미지 업데이트 로직은 별도 함수(updatePokemonImage)로 이동됨
     updatePokemonImage();
-
     renderWeeklyList();
 }
 
@@ -739,6 +733,60 @@ function importData(event) {
     reader.readAsText(file);
 }
 
+// ==========================================
+// 💡 도감 및 파트너 교체 모달 로직
+// ==========================================
+
+let selectedPokedexId = null;
+
+function getPokemonInfo(id) {
+    if (basePool.includes(id)) return { level: 1, base: id, xp: 30 };
+    if ([134, 135, 136].includes(id)) return { level: 2, base: 133, xp: 100 }; 
+    for (let base in evoMap) {
+        const evos = evoMap[base];
+        if (evos[0] === id) return { level: 2, base: Number(base), xp: 100 };
+        if (evos[1] === id) return { level: 3, base: Number(base), xp: 300 };
+    }
+    return { level: 1, base: id, xp: 30 }; 
+}
+
+function openPokedexModal(id) {
+    selectedPokedexId = id;
+    const info = getPokemonInfo(id);
+    const isLegendary = groupE.includes(id) || (tamaState.eggHatchCount > 0 && tamaState.eggHatchCount % 7 === 0);
+    
+    document.getElementById('pd-modal-name').innerText = pokeNames[id];
+    document.getElementById('pd-modal-level').innerText = `진화 단계 : Lv.${info.level}`;
+    
+    const gifSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isLegendary?'shiny/':''}${id}.gif`;
+    document.getElementById('pd-modal-img').src = gifSrc;
+    
+    document.getElementById('pokedex-modal').style.display = 'flex';
+}
+
+function closePokedexModal() {
+    document.getElementById('pokedex-modal').style.display = 'none';
+}
+
+function changeActivePokemon() {
+    if(!selectedPokedexId) return;
+    
+    const info = getPokemonInfo(selectedPokedexId);
+    
+    tamaState.currentPokemonId = selectedPokedexId;
+    tamaState.basePokemonId = info.base;
+    tamaState.level = info.level;
+    tamaState.xp = info.xp; 
+    tamaState.name = pokeNames[selectedPokedexId];
+    tamaState.nameChanged = false; 
+    
+    saveTamaState();
+    closePokedexModal();
+    
+    switchTab('tama');
+    updateBattleMessage(`가라! ${tamaState.name}, 널(를) 정했다!`);
+}
+
 function renderPokedex() {
     const grid = document.getElementById('pokedex-grid');
     grid.innerHTML = '';
@@ -751,10 +799,12 @@ function renderPokedex() {
         const imgClass = isUnlocked ? 'dex-img' : 'dex-img dex-unknown';
         const nameText = isUnlocked ? pokeNames[i] : '???';
         
+        const imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/${i}.png`;
+        
         grid.innerHTML += `
-            <div class="dex-item" style="margin-bottom: ${isUnlocked ? '18px' : '3px'};">
+            <div class="dex-item" style="margin-bottom: ${isUnlocked ? '18px' : '3px'}; cursor: ${isUnlocked ? 'pointer' : 'default'};" ${isUnlocked ? `onclick="openPokedexModal(${i})"` : ''}>
                 <span class="dex-num">No.${String(i).padStart(3, '0')}</span>
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i}.png" class="${imgClass}" loading="lazy">
+                <img src="${imgSrc}" class="${imgClass}" loading="lazy">
                 ${isUnlocked ? `<div class="dex-name">${nameText}</div>` : ''}
             </div>
         `;
