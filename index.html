@@ -17,16 +17,9 @@
     <div class="iphone-frame">
         
         <div id="screen-tama" class="screen active" style="padding-top:0; padding-left:0; padding-right:0;">
-            <div class="header-nav" style="padding-top:calc(10px + env(safe-area-inset-top)); margin-bottom:0; background:var(--bg-main); z-index:10;">
-                <div style="width: 20px;"></div>
-                <div class="header-actions">
-                    <button class="action-btn" onclick="openSettings()">⚙️</button>
-                </div>
-            </div>
-
-            <div class="battle-top-section" id="pokemon-stage">
+            <div class="battle-top-section" id="pokemon-stage" style="padding-top:calc(15px + env(safe-area-inset-top));">
                 <div class="hp-box-wrapper">
-                    <div class="hp-box">
+                    <div class="hp-box" style="margin: 0;">
                         <div class="hp-top">
                             <div class="hp-name"><span id="tamaName">알</span><span id="tamaNameEditIcon" style="font-size:14px; cursor:pointer; margin-left:4px;" onclick="changeName()">✏️</span></div>
                             <div class="hp-level" id="tamaLevel">Lv.1</div>
@@ -35,6 +28,9 @@
                             <span class="hp-label">XP</span>
                             <div class="hp-bar-track"><div class="hp-bar-fill" id="tamaExpFill"></div></div>
                         </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="action-btn" onclick="openSettings()" style="margin: 0;">⚙️</button>
                     </div>
                 </div>
 
