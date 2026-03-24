@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v69.4</title>
+    <title>Budget Split Ledger v69.5 (Production)</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -15,7 +15,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-toast-box"><p id="battle-toast-msg" class="retro-toast-text">메시지</p></div>
+        <div class="retro-toast-box"><p id="battle-toast-msg" class="retro-toast-text"></p></div>
     </div>
 
     <div class="iphone-frame">
@@ -24,7 +24,6 @@
             <div class="header-nav" style="padding-top:calc(10px + env(safe-area-inset-top)); margin-bottom:0; background:var(--bg-main); z-index:10;">
                 <h1 class="month-label" style="font-size:18px;">내 포켓몬</h1>
                 <div class="header-actions">
-                    <button class="action-btn" onclick="addDevCandy()" style="font-size:14px;">🛠️</button>
                     <button class="action-btn" onclick="openSettings()">⚙️</button>
                 </div>
             </div>
@@ -54,7 +53,7 @@
                 <div class="retro-dialog-box" style="padding:14px;">
                     <div class="info-row">
                         <span id="tamaStreak" style="color:var(--accent-orange); font-weight:bold;">🔥 0일 연속 기록</span>
-                        <span id="candy-limit-text">접속 5개 / 기록 보상</span>
+                        <span id="candy-limit-text">접속 15개 / 기록 보상</span>
                     </div>
                     <div class="action-row" style="margin-top:0;">
                         <button class="retro-btn candy-btn" id="feed-candy-btn" onclick="feedCandy()">
