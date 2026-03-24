@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v69.2</title>
+    <title>Budget Split Ledger v69.3</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -142,17 +142,17 @@
         </div>
 
         <div class="modal-overlay" id="pokedex-modal" style="align-items: center; background: rgba(0,0,0,0.7);">
-            <div class="retro-dialog-box" style="width: 280px; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 25px 20px;">
-                <h3 id="pd-modal-name" style="margin: 0 0 5px 0; font-size: 22px; color: var(--text-main);">피카츄</h3>
-                <div id="pd-modal-level" style="font-size: 14px; color: var(--accent-orange); font-weight: bold; margin-bottom: 20px;">Lv. 1</div>
+            <div class="retro-dialog-box" style="width: 320px; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 25px 20px;">
+                <h3 id="pd-modal-name" style="margin: 0 0 5px 0; font-size: 24px; color: var(--text-main);">피카츄</h3>
+                <div id="pd-modal-level" style="font-size: 15px; color: var(--accent-orange); font-weight: bold; margin-bottom: 20px;">Lv. 1</div>
                 
                 <div style="width: 120px; height: 120px; background: var(--bg-main); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 25px; box-shadow: inset 0 4px 0 #D0D0D0;">
                     <img id="pd-modal-img" src="" style="max-width: 80px; max-height: 80px; object-fit: contain; image-rendering: pixelated; transform: scale(1.5);">
                 </div>
 
                 <div style="display: flex; gap: 10px; width: 100%;">
-                    <button class="retro-btn" style="flex: 1; height: 46px; background: white;" onclick="closePokedexModal()">닫기</button>
-                    <button class="retro-btn" style="flex: 1.5; height: 46px; background: var(--accent-blue); color: white; font-weight: bold;" onclick="changeActivePokemon()">이 포켓몬 꺼내기</button>
+                    <button class="retro-btn" style="flex: 1; height: 48px; background: white; font-size: 15px;" onclick="closePokedexModal()">닫기</button>
+                    <button class="retro-btn" style="flex: 1.5; height: 48px; background: var(--accent-blue); color: white; font-weight: bold; font-size: 15px;" onclick="changeActivePokemon()">파트너로 지정</button>
                 </div>
             </div>
         </div>
@@ -209,10 +209,17 @@
             <div class="input-content-wrapper">
                 <div class="keypad-layer" id="keypad-layer">
                     <div class="keypad-grid">
-                        <button class="key" onclick="pressNum(7)">7</button><button class="key" onclick="pressNum(8)">8</button><button class="key" onclick="pressNum(9)">9</button>
-                        <button class="key" onclick="pressNum(4)">4</button><button class="key" onclick="pressNum(5)">5</button><button class="key" onclick="pressNum(6)">6</button>
-                        <button class="key" onclick="pressNum(1)">1</button><button class="key" onclick="pressNum(2)">2</button><button class="key" onclick="pressNum(3)">3</button>
-                        <button class="key" style="background:#E0E0E0;" onclick="pressNum('C')">C</button><button class="key" onclick="pressNum(0)">0</button>
+                        <button class="key" onclick="pressNum(7)">7</button>
+                        <button class="key" onclick="pressNum(8)">8</button>
+                        <button class="key" onclick="pressNum(9)">9</button>
+                        <button class="key" onclick="pressNum(4)">4</button>
+                        <button class="key" onclick="pressNum(5)">5</button>
+                        <button class="key" onclick="pressNum(6)">6</button>
+                        <button class="key" onclick="pressNum(1)">1</button>
+                        <button class="key" onclick="pressNum(2)">2</button>
+                        <button class="key" onclick="pressNum(3)">3</button>
+                        <button class="key" style="background:#E0E0E0;" onclick="pressNum('C')">C</button>
+                        <button class="key" onclick="pressNum(0)">0</button>
                         <button class="key key-done" onclick="blurAmount()">확인</button>
                     </div>
                 </div>
