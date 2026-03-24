@@ -733,10 +733,6 @@ function importData(event) {
     reader.readAsText(file);
 }
 
-// ==========================================
-// 💡 도감 및 파트너 교체 모달 로직
-// ==========================================
-
 let selectedPokedexId = null;
 
 function getPokemonInfo(id) {
@@ -787,6 +783,7 @@ function changeActivePokemon() {
     updateBattleMessage(`가라! ${tamaState.name}, 널(를) 정했다!`);
 }
 
+// 🌟 수정됨: 도감 그리드 렌더링 로직 (마진 해킹 제거)
 function renderPokedex() {
     const grid = document.getElementById('pokedex-grid');
     grid.innerHTML = '';
@@ -802,7 +799,7 @@ function renderPokedex() {
         const imgSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/${i}.png`;
         
         grid.innerHTML += `
-            <div class="dex-item" style="margin-bottom: ${isUnlocked ? '18px' : '3px'}; cursor: ${isUnlocked ? 'pointer' : 'default'};" ${isUnlocked ? `onclick="openPokedexModal(${i})"` : ''}>
+            <div class="dex-item" style="cursor: ${isUnlocked ? 'pointer' : 'default'};" ${isUnlocked ? `onclick="openPokedexModal(${i})"` : ''}>
                 <span class="dex-num">No.${String(i).padStart(3, '0')}</span>
                 <img src="${imgSrc}" class="${imgClass}" loading="lazy">
                 ${isUnlocked ? `<div class="dex-name">${nameText}</div>` : ''}
