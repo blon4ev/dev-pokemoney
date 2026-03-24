@@ -54,7 +54,8 @@ const POKEMON_KEY = 'pokemon_state_v68';
 const defaultPokemonState = {
     name: '알', nameChanged: false, candies: 0, xp: 0, level: 0, currentPokemonId: null, basePokemonId: null, eggHatchCount: 0, isFirstEgg: true, 
     streak: 0, lastRecordDate: getTodayDateStr(), lastLoginDate: '',
-    lastStreakDate: '', dailyRewards: {}, lastBudgetRewardDate: ''
+    lastStreakDate: '', dailyRewards: {}, lastBudgetRewardDate: '',
+    pokedex: [] // 신규: 획득한 포켓몬 ID 배열 추가
 };
 
 let tamaState = { ...defaultPokemonState };
@@ -157,10 +158,20 @@ function checkEvolution() {
         msg = `어라!? 포켓몬의 모습이...!`;
     }
 
+    // checkEvolution() 함수 내부의 하단 부분
     if (evolved) {
         const newName = pokeNames[tamaState.currentPokemonId];
         if (!tamaState.nameChanged) tamaState.name = newName; 
+        
+        // --- 신규: 도감에 등록 ---
+        if (!tamaState.pokedex) tamaState.pokedex = [];
+        if (!tamaState.pokedex.includes(tamaState.currentPokemonId)) {
+            tamaState.pokedex.push(tamaState.currentPokemonId);
+        }
+        // -----------------------
+
         updateBattleMessage(msg);
+    }
     }
 }
 
@@ -638,3 +649,99 @@ window.onload = () => {
     ledgerScreen.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
     ledgerScreen.addEventListener('touchend', e => { if(e.target.closest('.filter-bar')) return; const deltaX = e.changedTouches[0].screenX - touchStartX; const deltaY = e.changedTouches[0].screenY - touchStartY; if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) { if (deltaX > 0) moveMonth(-1); else moveMonth(1); } });
 };
+// --- [1] 개발자 치트 버튼 ---
+function addDevCandy() {
+    tamaState.candies += 10;
+    saveTamaState();
+    renderTama();
+    updateBattleMessage('🛠️ 개발자 권한: 사탕 10개 획득!');
+}
+
+// --- [2] 데이터 백업 (내보내기) ---
+function openSettings() { document.getElementById('settings-overlay').style.display = 'flex'; }
+function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
+
+function exportData() {
+    const backupData = {
+        ledger_v31: db,
+        budget_v31: budget,
+        ledger_cats_v39: cats,
+        pokemon_state_v68: tamaState
+    };
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `가계부_데이터백업_${getTodayDateStr()}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    closeSettings();
+    updateBattleMessage('데이터 백업이 완료되었습니다.');
+}
+
+// --- 데이터 복원 (불러오기) ---
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            if(imported.ledger_v31) localStorage.setItem('ledger_v31', JSON.stringify(imported.ledger_v31));
+            if(imported.budget_v31) localStorage.setItem('budget_v31', JSON.stringify(imported.budget_v31));
+            if(imported.ledger_cats_v39) localStorage.setItem('ledger_cats_v39', JSON.stringify(imported.ledger_cats_v39));
+            if(imported.pokemon_state_v68) localStorage.setItem('pokemon_state_v68', JSON.stringify(imported.pokemon_state_v68));
+            
+            alert('데이터가 성공적으로 복원되었습니다. 앱을 새로고침합니다.');
+            location.reload(); // 새로고침하여 데이터 적용
+        } catch (error) {
+            alert('잘못된 백업 파일입니다.');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// --- [3] 포켓몬 도감 렌더링 로직 ---
+function renderPokedex() {
+    const grid = document.getElementById('pokedex-grid');
+    grid.innerHTML = '';
+    const unlockedList = tamaState.pokedex || [];
+    
+    document.getElementById('dex-count').innerText = unlockedList.length;
+
+    // 1번(이상해씨) 부터 151번(뮤) 까지 렌더링
+    for (let i = 1; i <= 151; i++) {
+        const isUnlocked = unlockedList.includes(i);
+        const imgClass = isUnlocked ? 'dex-img' : 'dex-img dex-unknown';
+        const nameText = isUnlocked ? pokeNames[i] : '???';
+        
+        grid.innerHTML += `
+            <div class="dex-item" style="margin-bottom: ${isUnlocked ? '18px' : '3px'};">
+                <span class="dex-num">No.${String(i).padStart(3, '0')}</span>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${i}.png" class="${imgClass}" loading="lazy">
+                ${isUnlocked ? `<div class="dex-name">${nameText}</div>` : ''}
+            </div>
+        `;
+    }
+}
+
+// 기존 switchTab 함수 수정 (도감 탭 클릭 시 렌더링 추가)
+function switchTab(tab) { 
+    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); 
+    document.getElementById(`tab-${tab}`).classList.add('active'); 
+    showScreen(`screen-${tab}`); 
+    
+    if(tab === 'ledger') renderLedger(); 
+    if(tab === 'goal') renderGoalScreen(); 
+    if(tab === 'tama') renderTama(); 
+    if(tab === 'pokedex') renderPokedex(); // 신규
+}
+
+// 앱 최초 로드 시 현재 포켓몬이 도감에 없으면 강제 등록 처리 (하위 호환성)
+window.addEventListener('DOMContentLoaded', () => {
+    if (tamaState.currentPokemonId && (!tamaState.pokedex || !tamaState.pokedex.includes(tamaState.currentPokemonId))) {
+        if (!tamaState.pokedex) tamaState.pokedex = [];
+        tamaState.pokedex.push(tamaState.currentPokemonId);
+        saveTamaState();
+    }
+});
