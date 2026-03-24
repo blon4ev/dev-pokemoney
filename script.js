@@ -126,7 +126,6 @@ function updateBattleMessage(msg) {
 function checkDailyCandy() {
     const today = getTodayDateStr();
     if (tamaState.lastLoginDate !== today) {
-        // 🌟 수정됨: 일일 접속 보상 15개
         tamaState.candies += 15;
         tamaState.lastLoginDate = today;
         saveTamaState();
@@ -347,7 +346,6 @@ function renderTama() {
 
     const streakMsg = tamaState.streak >= 3 ? `🔥 ${tamaState.streak}일 연속 (보상 2배!)` : (tamaState.streak > 0 ? `🔥 ${tamaState.streak}일 연속` : '🌱 당일 기록 시작!');
     document.getElementById('tamaStreak').innerText = streakMsg;
-    document.getElementById('candy-limit-text').innerText = `매일 접속 15개 / 기록 보상`;
 
     updatePokemonImage();
     renderWeeklyList();
