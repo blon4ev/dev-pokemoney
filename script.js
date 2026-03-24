@@ -126,10 +126,11 @@ function updateBattleMessage(msg) {
 function checkDailyCandy() {
     const today = getTodayDateStr();
     if (tamaState.lastLoginDate !== today) {
-        tamaState.candies += 5;
+        // 🌟 수정됨: 일일 접속 보상 15개로 상향
+        tamaState.candies += 15;
         tamaState.lastLoginDate = today;
         saveTamaState();
-        setTimeout(() => { updateBattleMessage("일일 접속 보상으로 사탕 5개를 받았다!"); }, 500); 
+        setTimeout(() => { updateBattleMessage("일일 접속 보상으로 사탕 15개를 받았다!"); }, 500); 
     }
 }
 
@@ -346,7 +347,7 @@ function renderTama() {
 
     const streakMsg = tamaState.streak >= 3 ? `🔥 ${tamaState.streak}일 연속 (보상 2배!)` : (tamaState.streak > 0 ? `🔥 ${tamaState.streak}일 연속` : '🌱 당일 기록 시작!');
     document.getElementById('tamaStreak').innerText = streakMsg;
-    document.getElementById('candy-limit-text').innerText = `매일 접속 5개 / 기록 보상`;
+    document.getElementById('candy-limit-text').innerText = `매일 접속 15개 / 기록 보상`;
 
     updatePokemonImage();
     renderWeeklyList();
@@ -683,13 +684,6 @@ function handleDeleteRequest() {
 }
 function hideModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 function deleteItem(id, allGroup) { if(allGroup) { const item = db.find(x => x.id === id); db = db.filter(x => x.groupId !== item.groupId); } else { db = db.filter(x => x.id !== id); } localStorage.setItem('ledger_v31', JSON.stringify(db)); if(document.getElementById('tab-ledger').classList.contains('active')) { showScreen('screen-ledger'); renderLedger(); } else { showScreen('screen-tama'); } renderTama(); }
-
-function addDevCandy() {
-    tamaState.candies += 10;
-    saveTamaState();
-    renderTama();
-    updateBattleMessage('🛠️ 개발자 권한: 사탕 10개 획득!');
-}
 
 function openSettings() { document.getElementById('settings-overlay').style.display = 'flex'; }
 function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
