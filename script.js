@@ -55,7 +55,7 @@ const defaultPokemonState = {
     name: '알', nameChanged: false, candies: 0, xp: 0, level: 0, currentPokemonId: null, basePokemonId: null, eggHatchCount: 0, isFirstEgg: true, 
     streak: 0, lastRecordDate: getTodayDateStr(), lastLoginDate: '',
     lastStreakDate: '', dailyRewards: {}, lastBudgetRewardDate: '',
-    pokedex: [] // 신규: 획득한 포켓몬 ID 배열 추가
+    pokedex: [] // 신규: 도감 배열 추가
 };
 
 let tamaState = { ...defaultPokemonState };
@@ -64,6 +64,7 @@ try {
     if (saved && saved !== "undefined") {
         tamaState = { ...defaultPokemonState, ...JSON.parse(saved) }; 
         if (!tamaState.dailyRewards) tamaState.dailyRewards = {};
+        if (!tamaState.pokedex) tamaState.pokedex = [];
     } 
 } catch(e) {}
 function saveTamaState() { localStorage.setItem(POKEMON_KEY, JSON.stringify(tamaState)); }
@@ -158,20 +159,17 @@ function checkEvolution() {
         msg = `어라!? 포켓몬의 모습이...!`;
     }
 
-    // checkEvolution() 함수 내부의 하단 부분
     if (evolved) {
         const newName = pokeNames[tamaState.currentPokemonId];
         if (!tamaState.nameChanged) tamaState.name = newName; 
         
-        // --- 신규: 도감에 등록 ---
+        // 도감 등록
         if (!tamaState.pokedex) tamaState.pokedex = [];
         if (!tamaState.pokedex.includes(tamaState.currentPokemonId)) {
             tamaState.pokedex.push(tamaState.currentPokemonId);
         }
-        // -----------------------
 
         updateBattleMessage(msg);
-    }
     }
 }
 
@@ -564,7 +562,17 @@ function renderEmojis() { const eg = document.getElementById('emoji-grid'); eg.i
 function selectEmoji(e) { newCatEmoji = e; renderEmojis(); }
 function saveNewCategory() { const n = document.getElementById('new-cat-name').value.trim(); if(!n) return alert('카테고리 이름을 입력하세요'); cats[inputMode].push({n, i: newCatEmoji}); localStorage.setItem('ledger_cats_v39', JSON.stringify(cats)); closeAddCat(); renderCats(); selectCat(n, newCatEmoji); }
 
-function switchTab(tab) { document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); showScreen(`screen-${tab}`); if(tab === 'ledger') renderLedger(); if(tab === 'goal') renderGoalScreen(); if(tab === 'tama') renderTama(); }
+function switchTab(tab) { 
+    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); 
+    document.getElementById(`tab-${tab}`).classList.add('active'); 
+    showScreen(`screen-${tab}`); 
+    
+    if(tab === 'ledger') renderLedger(); 
+    if(tab === 'goal') renderGoalScreen(); 
+    if(tab === 'tama') renderTama(); 
+    if(tab === 'pokedex') renderPokedex(); // 도감 렌더링 호출
+}
+
 function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function openStatsModal() { document.getElementById('stats-modal').classList.add('active'); renderStatsModal(); }
 function closeStatsModal() { document.getElementById('stats-modal').classList.remove('active'); }
@@ -640,15 +648,10 @@ function handleDeleteRequest() {
 function hideModal() { document.getElementById('modal-overlay').style.display = 'none'; }
 function deleteItem(id, allGroup) { if(allGroup) { const item = db.find(x => x.id === id); db = db.filter(x => x.groupId !== item.groupId); } else { db = db.filter(x => x.id !== id); } localStorage.setItem('ledger_v31', JSON.stringify(db)); if(document.getElementById('tab-ledger').classList.contains('active')) { showScreen('screen-ledger'); renderLedger(); } else { showScreen('screen-tama'); } renderTama(); }
 
-window.onload = () => { 
-    checkStreakBreakAndCleanup();
-    checkDailyCandy(); 
-    renderTama(); renderLedger(); setInterval(renderTama, 60000); 
-    document.querySelectorAll('.scroll-container').forEach(container => { container.addEventListener('scroll', function() { this.classList.add('is-scrolling'); clearTimeout(scrollTimeout); scrollTimeout = setTimeout(() => { this.classList.remove('is-scrolling'); }, 2000); }); });
-    const ledgerScreen = document.getElementById('screen-ledger'); let touchStartX = 0; let touchStartY = 0;
-    ledgerScreen.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
-    ledgerScreen.addEventListener('touchend', e => { if(e.target.closest('.filter-bar')) return; const deltaX = e.changedTouches[0].screenX - touchStartX; const deltaY = e.changedTouches[0].screenY - touchStartY; if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) { if (deltaX > 0) moveMonth(-1); else moveMonth(1); } });
-};
+// ==========================================
+// 💡 [신규] v69 추가 기능 모음
+// ==========================================
+
 // --- [1] 개발자 치트 버튼 ---
 function addDevCandy() {
     tamaState.candies += 10;
@@ -725,18 +728,6 @@ function renderPokedex() {
     }
 }
 
-// 기존 switchTab 함수 수정 (도감 탭 클릭 시 렌더링 추가)
-function switchTab(tab) { 
-    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); 
-    document.getElementById(`tab-${tab}`).classList.add('active'); 
-    showScreen(`screen-${tab}`); 
-    
-    if(tab === 'ledger') renderLedger(); 
-    if(tab === 'goal') renderGoalScreen(); 
-    if(tab === 'tama') renderTama(); 
-    if(tab === 'pokedex') renderPokedex(); // 신규
-}
-
 // 앱 최초 로드 시 현재 포켓몬이 도감에 없으면 강제 등록 처리 (하위 호환성)
 window.addEventListener('DOMContentLoaded', () => {
     if (tamaState.currentPokemonId && (!tamaState.pokedex || !tamaState.pokedex.includes(tamaState.currentPokemonId))) {
@@ -745,3 +736,30 @@ window.addEventListener('DOMContentLoaded', () => {
         saveTamaState();
     }
 });
+
+// 앱 실행 (초기화)
+window.onload = () => { 
+    checkStreakBreakAndCleanup();
+    checkDailyCandy(); 
+    renderTama(); 
+    renderLedger(); 
+    setInterval(renderTama, 60000); 
+    document.querySelectorAll('.scroll-container').forEach(container => { 
+        container.addEventListener('scroll', function() { 
+            this.classList.add('is-scrolling'); 
+            clearTimeout(scrollTimeout); 
+            scrollTimeout = setTimeout(() => { this.classList.remove('is-scrolling'); }, 2000); 
+        }); 
+    });
+    const ledgerScreen = document.getElementById('screen-ledger'); 
+    let touchStartX = 0; let touchStartY = 0;
+    ledgerScreen.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, {passive: true});
+    ledgerScreen.addEventListener('touchend', e => { 
+        if(e.target.closest('.filter-bar')) return; 
+        const deltaX = e.changedTouches[0].screenX - touchStartX; 
+        const deltaY = e.changedTouches[0].screenY - touchStartY; 
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) { 
+            if (deltaX > 0) moveMonth(-1); else moveMonth(1); 
+        } 
+    });
+};
